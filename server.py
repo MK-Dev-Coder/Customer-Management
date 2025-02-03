@@ -43,6 +43,23 @@ def index():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route("/register", methods=['POST'])
+def register():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')  # Remember to hash passwords in production environments!
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        sql = "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)"
+        cur.execute(sql, (username, email, password))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect(url_for('index'))  # Redirect to login page after successful signup
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 @app.route("/login", methods=['POST'])
 def login():
     username = request.form.get('username')
