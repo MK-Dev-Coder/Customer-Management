@@ -1,9 +1,17 @@
+import logging
 from flask import Flask, jsonify, request, redirect, url_for
 from flask_cors import CORS
 import os
 import psycopg2
 
+logging.basicConfig(
+    filename='app.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 app = Flask(__name__)
+app.logger.addHandler(logging.StreamHandler())  # Log to console as well
 CORS(app)  # This enables CORS for all routes
 
 # Configuration for the Digital Ocean Managed Database.
