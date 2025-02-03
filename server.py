@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request, redirect, url_for
+from flask_cors import CORS
 import os
 import psycopg2
 
 app = Flask(__name__)
+CORS(app)  # This enables CORS for all routes
 
 # Configuration for the Digital Ocean Managed Database.
 DB_CONFIG = {
