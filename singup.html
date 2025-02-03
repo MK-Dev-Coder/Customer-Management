@@ -61,8 +61,25 @@
     <script>
         document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
-            // Add your form submission logic here
-            alert('Form submitted!');
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: this.method,
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to create user.');
+                }
+            })
+            .then(data => {
+                alert('User successfully created!');
+                window.location.href = "index.html";
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+            });
         });
     </script>
 </body>
