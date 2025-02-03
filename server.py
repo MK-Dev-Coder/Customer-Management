@@ -1,6 +1,6 @@
+from flask import Flask, jsonify, request, redirect, url_for
 import os
 import psycopg2
-from flask import Flask, jsonify
 
 app = Flask(__name__)
 
@@ -41,11 +41,31 @@ def index():
             "current_time": str(current_time)
         })
     except Exception as e:
-        return jsonify({
-            "error": "Database connection failed.",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)})
+
+@app.route("/login", methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        query = "SELECT * FROM users WHERE username=%s AND password=%s"
+        cur.execute(query, (username, password))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if user:
+            # On successful login, redirect to dashboard.
+            return redirect(url_for('dashboard'))
+        else:
+            return jsonify({"error": "Invalid credentials."}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/dashboard")
+def dashboard():
+    return "Welcome to your dashboard!"
 
 if __name__ == '__main__':
-    # The Flask app will run on http://0.0.0.0:5000 by default.
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=3000)
